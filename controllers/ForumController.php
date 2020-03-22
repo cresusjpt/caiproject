@@ -44,6 +44,40 @@ class ForumController extends Controller
         ]);
     }
 
+    public function actionPost()
+    {
+        $post = new Messageforum();
+        $models = Messageforum::find()->orderBy([
+            'date_message' => 'desc'
+        ])->all();
+        return $this->render('post', [
+            'models' => $models,
+            'post' => $post,
+        ]);
+    }
+
+    /**
+     * Creates a new Messageforum model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionAdd()
+    {
+        if (!Yii::$app->user->isGuest){
+            $model = new Messageforum();
+
+            if ($model->load(Yii::$app->request->post())) {
+                $model->id_client = intval(Yii::$app->user->identity->id_user);
+                $model->date_message = date('Y-m-d H:i:s');
+                if ($model->save(false)){
+                    return $this->redirect('post');
+                }
+            }
+        }
+
+        return $this->redirect('post');
+    }
+
     /**
      * Displays a single Messageforum model.
      * @param integer $id

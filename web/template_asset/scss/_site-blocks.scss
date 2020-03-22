@@ -617,6 +617,12 @@
 		background: lighten(#ccc, 10%);
 		color: $black;
 	}
+
+	ul, li {
+		list-style: none none;
+		background: lighten(#ccc, 10%);
+		color: $black;
+	}
 	.more-page {
 		background: none;
 		letter-spacing: .1em;

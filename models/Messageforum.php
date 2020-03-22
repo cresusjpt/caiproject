@@ -58,7 +58,7 @@ class Messageforum extends \yii\db\ActiveRecord
      */
     public function getClient()
     {
-        return $this->hasOne(Utilisateur::className(), ['id_client' => 'id_client']);
+        return $this->hasOne(Utilisateur::className(), ['id_user' => 'id_client']);
     }
 
     /**

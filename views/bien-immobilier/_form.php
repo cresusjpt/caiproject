@@ -23,6 +23,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'vitrine')->textarea(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'id_client')->widget(Select2::class, [
         'data' => ArrayHelper::map(Utilisateur::find()->all(), 'id_user', 'civilite'),
         'language' => 'fr',

@@ -51,7 +51,10 @@ class AppAsset extends AssetBundle
         'template_asset/js/jquery.fancybox.min.js',
         'template_asset/js/jquery.sticky.js',
 
-        'template_asset/js/main.js'
+        'template_asset/js/main.js',
+        'template_asset/js/site.js'
+
+
 
     ];
     public $depends = [

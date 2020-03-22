@@ -32,7 +32,8 @@ class BienImmobilierSearch extends BienImmobilier
         return Model::scenarios();
     }
 
-    public function searchIndexData($params){
+    public function searchIndexData($params)
+    {
         $query = BienImmobilier::find();
 
         $this->load($params);
@@ -52,6 +53,7 @@ class BienImmobilierSearch extends BienImmobilier
     public function search($params)
     {
         $query = BienImmobilier::find();
+        $query->orderBy(['date_modif' => 'desc']);
 
         // add conditions that should always apply here
 

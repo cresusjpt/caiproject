@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\BienImmobilierSearch;
+use app\models\Contact;
 use app\models\Utilisateur;
 use phpDocumentor\Reflection\Types\This;
 use Yii;
@@ -33,12 +34,6 @@ class SiteController extends Controller
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
         ];
     }
 
@@ -67,10 +62,12 @@ class SiteController extends Controller
     {
 
         $searchModel = new BienImmobilierSearch();
+        $contact = new ContactForm();
         $dataProvider = $searchModel->searchIndexData(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'model' => $dataProvider
+            'model' => $dataProvider,
+            'contact' => $contact,
         ]);
     }
 
@@ -140,6 +137,31 @@ class SiteController extends Controller
     }
 
     /**
+     * Displays contact page.
+     *
+     * @return Response|string
+     */
+    public function actionContacter()
+    {
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'],$model)) {
+            $contact = new Contact();
+            $contact->nom = $model->nom;
+            $contact->prenom = $model->prenom;
+            $contact->email = $model->email;
+            $contact->objet = $model->objet;
+            $contact->message = $model->message;
+
+            if ($contact->validate() && $contact->save()){
+                Yii::$app->session->setFlash('contactFormSubmitted');
+                return $this->refresh('#contact-section');
+            }
+
+        }
+        return $this->redirect('index');
+    }
+
+    /**
      * Displays about page.
      *
      * @return string
@@ -153,7 +175,8 @@ class SiteController extends Controller
      * @return string|Response
      * @throws \yii\base\Exception
      */
-    public function actionRegister(){
+    public function actionRegister()
+    {
 
 
         $this->layout = 'loginmain';
@@ -163,27 +186,26 @@ class SiteController extends Controller
 
         $model = new Utilisateur();
 
-        if ($model->load(Yii::$app->request->post())){
-            if ($model->isSamePassword($model->motdepasse,$model->rawpassword)){
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->isSamePassword($model->motdepasse, $model->rawpassword)) {
                 $model->setPassword($model->rawpassword);
                 $model->generateAuthKey();
                 $model->id_client = 1;
                 $model->generateToken();
 
 
-
-                if ($model->validate() && $model->save() ){
-                    Yii::$app->session->setFlash('success','Inscription réussie');
+                if ($model->validate() && $model->save()) {
+                    Yii::$app->session->setFlash('success', 'Inscription réussie');
                     return $this->redirect(Url::toRoute(['site/login']));
-                }else{
-                    var_dump($model->getErrors() );
+                } else {
+                    var_dump($model->getErrors());
                     die();
                 }
             }
         }
 
-        return $this->render('register',[
-            'model'=>$model
+        return $this->render('register', [
+            'model' => $model
         ]);
     }
 }

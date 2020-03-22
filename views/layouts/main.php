@@ -43,7 +43,7 @@ AppAsset::register($this);
             <div class="row align-items-center">
 
                 <div class="col-6 col-xl-2">
-                    <h1 class="mb-0 site-logo m-0 p-0"><a href="index.html" class="mb-0">Gestion Immobilière.</a></h1>
+                    <h1 class="mb-0 site-logo m-0 p-0"><a href="<?=Url::to(['site/index'])?>" class="mb-0">Gestion Immobilière.</a></h1>
                 </div>
 
                 <div class="col-12 col-md-10 d-none d-xl-block">
@@ -57,7 +57,7 @@ AppAsset::register($this);
                             <?php
                             if (!Yii::$app->user->isGuest) {
                                 ?>
-                                <li><a href="#" class="nav-link">Forum</a></li>
+                                <li><a href="<?=Url::toRoute(['forum/post'])?>" class="nav-link">Forum</a></li>
                                 <?php
                             }
                             ?>
@@ -69,14 +69,7 @@ AppAsset::register($this);
                                 <?php
                             } else {
                                 ?>
-                                <li><a>Deconnexion
-                                        <?php Html::beginForm(['/site/logout'], 'post');
-                                        Html::submitButton(
-                                            'Déconnexion (' . Yii::$app->user->identity->identifiant . ')',
-                                            ['class' => 'btn btn-link logout']
-                                        );
-                                        Html::endForm(); ?>
-                                    </a></li>
+                                <li><a href="<?=Url::toRoute(['site/logout'])?>">Deconnexion</a></li>
                                 <?php
                             }
                             ?>
@@ -135,7 +128,7 @@ AppAsset::register($this);
                         <a href="#" class="pl-0 pr-3"><span class="icon-facebook"></span></a>
                         <a href="#" class="pl-3 pr-3"><span class="icon-twitter"></span></a>
                         <a href="#" class="pl-3 pr-3"><span class="icon-instagram"></span></a>
-                        <a href="#" class="pl-3 pr-3"><span class="icon-linkedin"></span></a>
+                        <a href="https://www.linkedin.com/in/jean-paul-tossou/" class="pl-3 pr-3"><span class="icon-linkedin"></span></a>
                     </div>
 
 
@@ -151,13 +144,10 @@ AppAsset::register($this);
                         </p>
                     </div>
                 </div>
-
             </div>
         </div>
     </footer>
-
 </div>
-
 <?php $this->endBody() ?>
 </body>
 </html>

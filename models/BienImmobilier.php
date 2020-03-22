@@ -10,9 +10,11 @@ use Yii;
  * @property int $id_bien
  * @property string $nom
  * @property string $lieu
+ * @property string $date_modif
  * @property float $prix
  * @property string $categorie
  * @property string $description
+ * @property string $vitrine
  * @property int $id_client
  *
  * @property Utilisateur $client
@@ -34,7 +36,7 @@ class BienImmobilier extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nom', 'lieu', 'prix', 'categorie', 'id_client'], 'required'],
+            [['nom', 'lieu', 'prix', 'categorie', 'id_client','date_modif'], 'required'],
             [['prix'], 'number'],
             [['id_client'], 'integer'],
             [['nom', 'lieu', 'categorie'], 'string', 'max' => 50],
@@ -51,6 +53,8 @@ class BienImmobilier extends \yii\db\ActiveRecord
         return [
             'id_bien' => Yii::t('app', 'Id Bien'),
             'nom' => Yii::t('app', 'Nom'),
+            'date_modif' => Yii::t('app', 'Date'),
+            'vitrine' => Yii::t('app', 'Description de vitrine'),
             'lieu' => Yii::t('app', 'Lieu'),
             'prix' => Yii::t('app', 'Prix'),
             'categorie' => Yii::t('app', 'Categorie'),

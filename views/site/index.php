@@ -1,10 +1,12 @@
 <?php
 
 /* @var $this yii\web\View */
+/* @var $contact \app\models\ContactForm */
 
 use app\models\Image;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use yii\captcha\Captcha;
 
 if (!Yii::$app->user->isGuest && Yii::$app->user->identity->id_client == 0) {
     Yii::$app->response->redirect(Url::to(['site/admin'], true));
@@ -69,20 +71,20 @@ $this->title = 'Gestion Immobiliere';
             foreach ($model as $oneModel) {
 
                 $image = Image::findOne([
-                        'id_bien'=>$oneModel['id_bien']
+                    'id_bien' => $oneModel['id_bien']
                 ]);
                 ?>
                 <div class="property">
-                    <a href="property-single.html">
-                        <img src="<?= Url::to("@web/".$image->chemin) ?>" alt="Image"
+                    <a href="<?= \yii\helpers\Url::to(['bien-immobilier/detail', 'id' => $oneModel->id_bien]) ?>">
+                        <img src="<?= Url::to("@web/" . $image->chemin) ?>" alt="Image"
                              class="img-fluid">
                     </a>
                     <div class="prop-details p-3">
-                        <div><strong class="price">€<?=$oneModel->prix?></strong></div>
+                        <div><strong class="price">€<?= $oneModel->prix ?></strong></div>
                         <div class="mb-2 d-flex justify-content-between">
-                            <?=$oneModel->description?>
+                            <?= $oneModel->description ?>
                         </div>
-                        <div><?=$oneModel->lieu?></div>
+                        <div><?= $oneModel->lieu ?></div>
                     </div>
                 </div>
                 <?php
@@ -92,7 +94,7 @@ $this->title = 'Gestion Immobiliere';
         </div>
         <div class="row justify-content-center">
             <div class="col-md-4">
-                <a href="listings.html" class="btn btn-primary btn-block">Voir la liste des immobiliers</a>
+                <a href="<?=Url::to(['bien-immobilier/liste'])?>" class="btn btn-primary btn-block">Voir la liste des immobiliers</a>
             </div>
         </div>
     </div>
@@ -290,9 +292,7 @@ $this->title = 'Gestion Immobiliere';
             <div class="testimonial">
 
                 <blockquote class="mb-5">
-                    <p>&ldquo;Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur unde
-                        reprehenderit aperiam quaerat fugiat repudiandae explicabo animi minima fuga beatae illum
-                        eligendi incidunt consequatur. Amet dolores excepturi earum unde iusto.&rdquo;</p>
+                    <p>&ldquo;Je joue tellement personnelle que mes équipiers m'ont voulu offrir une maison pour que j'aille en retraite. L'agene s'en est occupé trop bien!&rdquo;</p>
                 </blockquote>
 
                 <figure class="mb-4 d-flex align-items-center justify-content-center">
@@ -306,9 +306,7 @@ $this->title = 'Gestion Immobiliere';
             <div class="testimonial">
 
                 <blockquote class="mb-5">
-                    <p>&ldquo;Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur unde
-                        reprehenderit aperiam quaerat fugiat repudiandae explicabo animi minima fuga beatae illum
-                        eligendi incidunt consequatur. Amet dolores excepturi earum unde iusto.&rdquo;</p>
+                    <p>&ldquo;Simplement les meilleurs. J'ai acheté mon chateau de Biarritz sur la côte grace à eux&rdquo;</p>
                 </blockquote>
                 <figure class="mb-4 d-flex align-items-center justify-content-center">
                     <div><img src="<?= Url::to("@web/template_asset/images/person_2.jpg") ?>" alt="Image"
@@ -323,9 +321,7 @@ $this->title = 'Gestion Immobiliere';
             <div class="testimonial">
 
                 <blockquote class="mb-5">
-                    <p>&ldquo;Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur unde
-                        reprehenderit aperiam quaerat fugiat repudiandae explicabo animi minima fuga beatae illum
-                        eligendi incidunt consequatur. Amet dolores excepturi earum unde iusto.&rdquo;</p>
+                    <p>&ldquo;Lors de la crise du au virus chinois, je me suis réfugié dans une villa louée par ma femme brigitte avec eux. C'était simple le processus et ils ont été discrets!&rdquo;</p>
                 </blockquote>
                 <figure class="mb-4 d-flex align-items-center justify-content-center">
                     <div><img src="<?= Url::to("@web/template_asset/images/person_4.jpg") ?>" alt="Image"
@@ -341,9 +337,7 @@ $this->title = 'Gestion Immobiliere';
             <div class="testimonial">
 
                 <blockquote class="mb-5">
-                    <p>&ldquo;Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur unde
-                        reprehenderit aperiam quaerat fugiat repudiandae explicabo animi minima fuga beatae illum
-                        eligendi incidunt consequatur. Amet dolores excepturi earum unde iusto.&rdquo;</p>
+                    <p>&ldquo;La meilleure agence sur la côte basque.&rdquo;</p>
                 </blockquote>
                 <figure class="mb-4 d-flex align-items-center justify-content-center">
                     <div><img src="<?= Url::to("@web/template_asset/images/person_4.jpg") ?>" alt="Image"
@@ -359,6 +353,7 @@ $this->title = 'Gestion Immobiliere';
 
 <section class="site-section bg-light bg-image" id="contact-section">
     <div class="container">
+
         <div class="row mb-5">
             <div class="col-12 text-center">
                 <!-- <h3 class="section-sub-title">Get</h3> -->
@@ -369,9 +364,10 @@ $this->title = 'Gestion Immobiliere';
             <div class="col-md-7 mb-5">
 
                 <?php $form = ActiveForm::begin([
+                    'action' => ['site/contacter'],
                     'id' => 'contact',
                     'options' => [
-                        'class'=> 'p-5 bg-white',
+                        'class' => 'p-5 bg-white',
                     ],
                     'fieldConfig' => [
                         'options' => [
@@ -380,49 +376,57 @@ $this->title = 'Gestion Immobiliere';
                     ],
                 ]); ?>
 
-                    <h2 class="h4 text-black mb-5">Formulaire de Contact</h2>
+                <?php if (Yii::$app->session->hasFlash('contactFormSubmitted')): ?>
 
-                    <div class="row form-group">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <?= $form->field($model, 'nom')->textInput(['maxlength' => true]) ?>
-                            <label class="text-black" for="fname">Prénom</label>
-                            <input type="text" id="fname" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="text-black" for="lname">Nom</label>
-                            <input type="text" id="lname" class="form-control">
-                        </div>
+                    <div class="alert alert-success">
+                        Merci pour votre messsage. Nous allons vous répondre aussitôt que possible.
                     </div>
 
-                    <div class="row form-group">
+                <?php endif; ?>
 
-                        <div class="col-md-12">
-                            <label class="text-black" for="email">Email</label>
-                            <input type="email" id="email" class="form-control">
-                        </div>
+                <h2 class="h4 text-black mb-5">Formulaire de Contact</h2>
+
+                <div class="row form-group">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <?= $form->field($contact, 'nom')->textInput(['maxlength' => true]) ?>
                     </div>
-
-                    <div class="row form-group">
-
-                        <div class="col-md-12">
-                            <label class="text-black" for="subject">Objet</label>
-                            <input type="subject" id="subject" class="form-control">
-                        </div>
+                    <div class="col-md-6">
+                        <?= $form->field($contact, 'prenom')->textInput(['maxlength' => true]) ?>
                     </div>
+                </div>
 
-                    <div class="row form-group">
-                        <div class="col-md-12">
-                            <label class="text-black" for="message">Message</label>
-                            <textarea name="message" id="message" cols="30" rows="7" class="form-control"
-                                      placeholder="Saisir votre message ou question ici..."></textarea>
-                        </div>
-                    </div>
+                <div class="row form-group">
 
-                    <div class="row form-group">
-                        <div class="col-md-12">
-                            <input type="submit" value="Envoyer" class="btn btn-primary btn-md text-white">
-                        </div>
+                    <div class="col-md-12">
+                        <?= $form->field($contact, 'email')->textInput(['maxlength' => true]) ?>
                     </div>
+                </div>
+
+                <div class="row form-group">
+
+                    <div class="col-md-12">
+                        <?= $form->field($contact, 'objet')->textInput(['maxlength' => true]) ?>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <?= $form->field($contact, 'message')->textarea(['rows' => 7, 'cols' => 30]) ?>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <?= $form->field($contact, 'verifyCode')->widget(Captcha::className(), [
+                            'template' => '<div class="row"><div class="col-lg-3">{image}</div><div class="col-lg-6">{input}</div></div>',
+                        ]) ?>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <input type="submit" value="Envoyer" class="btn btn-primary btn-md text-white">
+                    </div>
+                </div>
                 <?php ActiveForm::end(); ?>
 
             </div>

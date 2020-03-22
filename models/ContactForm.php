@@ -10,10 +10,11 @@ use yii\base\Model;
  */
 class ContactForm extends Model
 {
-    public $name;
+    public $nom;
+    public $prenom;
     public $email;
-    public $subject;
-    public $body;
+    public $objet;
+    public $message;
     public $verifyCode;
 
 
@@ -23,8 +24,9 @@ class ContactForm extends Model
     public function rules()
     {
         return [
+            [['nom', 'prenom', 'email', 'objet', 'message'], 'required'],
             // name, email, subject and body are required
-            [['name', 'email', 'subject', 'body'], 'required'],
+            //[['name', 'email', 'subject', 'body'], 'required'],
             // email has to be a valid email address
             ['email', 'email'],
             // verifyCode needs to be entered correctly
@@ -38,7 +40,7 @@ class ContactForm extends Model
     public function attributeLabels()
     {
         return [
-            'verifyCode' => 'Verification Code',
+            'verifyCode' => 'Code de vérification',
         ];
     }
 
@@ -47,15 +49,20 @@ class ContactForm extends Model
      * @param string $email the target email address
      * @return bool whether the model passes validation
      */
-    public function contact($email)
+    public function contact($email,$model=null)
     {
         if ($this->validate()) {
-            Yii::$app->mailer->compose()
-                ->setTo($email)
+
+            if ($model != null){
+                $view = Yii::$app->mailer->compose('email', ['model' => $model]);
+            }else{
+                $view = Yii::$app->mailer->compose();
+            }
+                $view->setTo($email)
                 ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->params['senderName']])
-                ->setReplyTo([$this->email => $this->name])
-                ->setSubject($this->subject)
-                ->setTextBody($this->body)
+                ->setReplyTo([$this->email => $this->nom." ".$this->prenom])
+                ->setSubject($this->objet)
+                ->setTextBody($this->message)
                 ->send();
 
             return true;

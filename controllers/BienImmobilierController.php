@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use app\models\BienImmobilier;
 use app\models\BienImmobilierSearch;
+use yii\data\Pagination;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -45,6 +46,40 @@ class BienImmobilierController extends Controller
     }
 
     /**
+     * Lists all BienImmobilier models.
+     * @return mixed
+     */
+    public function actionListe()
+    {
+        $searchModel = new BienImmobilierSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $query = $dataProvider->query;
+        $countquery = clone $query;
+        $pages = new Pagination([
+            'totalCount' => $countquery->count(),
+        ]);
+
+        $models = $query->offset($pages->offset)
+            ->limit($pages->limit)
+            ->all();
+
+        return $this->render('list', [
+            'models' => $models,
+            'pages' => $pages,
+        ]);
+    }
+
+    public function actionDetail($id){
+
+        $model = BienImmobilier::findOne($id);
+
+       return $this->render('detail',[
+           'model'=>$model
+       ]);
+    }
+
+    /**
      * Displays a single BienImmobilier model.
      * @param integer $id
      * @return mixed
@@ -66,8 +101,12 @@ class BienImmobilierController extends Controller
     {
         $model = new BienImmobilier();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id_bien]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->date_modif = date('Y-m-d');
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id_bien]);
+
+            }
         }
 
         return $this->render('create', [
@@ -86,8 +125,12 @@ class BienImmobilierController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id_bien]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->date_modif = date('Y-m-d');
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id_bien]);
+
+            }
         }
 
         return $this->render('update', [
@@ -101,6 +144,8 @@ class BienImmobilierController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
